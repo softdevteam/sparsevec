@@ -28,8 +28,8 @@ use vob::Vob;
 /// # Example
 ///
 /// ```
-/// extern crate sparse_vec;
-/// use sparse_vec::SparseVec;
+/// extern crate sparsevec;
+/// use sparsevec::SparseVec;
 ///
 /// fn main() {
 ///     let v:Vec<usize> = vec![1,0,0,0,
@@ -92,7 +92,7 @@ where
     ///
     /// # Examples
     /// ```
-    /// use sparse_vec::SparseVec;
+    /// use sparsevec::SparseVec;
     /// let v:Vec<usize> = vec![1,2,3,4,5,6,7,8];
     /// let sv = SparseVec::from(&v, 0, 4);
     /// assert_eq!(sv.get(1,2).unwrap(), 7);
@@ -128,7 +128,7 @@ where
     ///
     /// # Examples
     /// ```
-    /// use sparse_vec::SparseVec;
+    /// use sparsevec::SparseVec;
     /// let v:Vec<usize> = vec![1,2,3,4,5,6,7,8];
     /// let sv = SparseVec::from(&v, 0, 4);
     /// assert_eq!(sv.get(1,2).unwrap(), 7);
@@ -145,7 +145,7 @@ where
     /// Returns the number of elements of the original input vector.
     /// # Examples
     /// ```
-    /// use sparse_vec::SparseVec;
+    /// use sparsevec::SparseVec;
     /// let v = vec![1,2,3,4];
     /// let sv = SparseVec::from(&v, 0 as usize, 2);
     /// assert_eq!(sv.len(), 4);
@@ -157,7 +157,7 @@ where
     /// Returns true if the SparseVec has no elements or false otherwise.
     /// # Examples
     /// ```
-    /// use sparse_vec::SparseVec;
+    /// use sparsevec::SparseVec;
     /// let v = Vec::new();
     /// let sv = SparseVec::from(&v, 0 as usize, 0);
     /// assert_eq!(sv.is_empty(), true);

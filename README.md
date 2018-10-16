@@ -12,8 +12,8 @@ Communications of the ACM 22.11 (1979): 606-611.
 # Usage
 
 ```rust
-extern crate sparse_vec;
-use sparse_vec::SparseVec;
+extern crate sparsevec;
+use sparsevec::SparseVec;
 
 fn main() {
     use sparsevec::SparseVec;
