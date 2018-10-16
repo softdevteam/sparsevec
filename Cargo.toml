@@ -1,5 +1,5 @@
 [package]
-name = "sparse_vec"
+name = "sparsevec"
 description = "Compress vectors using row displacement"
 version = "0.1.0"
 authors = ["Lukas Diekmann <lukas.diekmann@gmail.com>"]
