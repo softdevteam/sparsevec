@@ -108,7 +108,10 @@ where
             };
         }
 
-        let (c, d) = compress(v, empty_val, row_length);
+        // Sort rows by amount of empty values as suggested in
+        // "Smaller  faster  table  driven  parser" by S. F. Zeigler
+        let s = sort(&v, empty_val, row_length);
+        let (c, d) = compress(v, &s, empty_val, row_length);
         let e = calc_empties(v, empty_val);
         let pv = PackedVec::new(c);
         SparseVec {
@@ -176,6 +179,7 @@ fn calc_empties<T: PartialEq>(vec: &Vec<T>, empty_val: T) -> Vob {
 
 fn compress<T: Clone + Copy + PartialEq>(
     vec: &Vec<T>,
+    sorted: &Vec<usize>,
     empty_val: T,
     row_length: usize,
 ) -> (Vec<T>, Vec<usize>) {
@@ -183,18 +187,19 @@ fn compress<T: Clone + Copy + PartialEq>(
     r.resize(row_length, empty_val);
 
     let mut dv = Vec::new(); // displacement vector
+    dv.resize(sorted.len(), 0);
 
-    for s in vec.chunks(row_length) {
+    for s in sorted {
+        let slice = &vec[s * row_length..(s + 1) * row_length];
         let mut d = 0; // displacement value
         loop {
-            if fits(&s, &r, d, empty_val) {
-                apply(s, &mut r, d, empty_val);
-                dv.push(d);
+            if fits(slice, &r, d, empty_val) {
+                apply(slice, &mut r, d, empty_val);
+                dv[*s] = d;
                 break;
             } else {
                 d += 1;
-                let s = r.len();
-                if d + row_length > s {
+                if d + row_length > r.len() {
                     r.resize(d + row_length, empty_val); // increase result vector size
                 }
             }
@@ -205,7 +210,7 @@ fn compress<T: Clone + Copy + PartialEq>(
 
 fn fits<T: PartialEq>(v: &[T], target: &Vec<T>, d: usize, empty_val: T) -> bool {
     for i in 0..v.len() {
-        if v[i] != empty_val && target[d + i] != empty_val {
+        if v[i] != empty_val && target[d + i] != empty_val && target[d + i] != v[i] {
             return false;
         }
     }
@@ -218,6 +223,20 @@ fn apply<T: Copy + PartialEq>(v: &[T], target: &mut Vec<T>, d: usize, empty_val:
             target[d + i] = v[i]
         }
     }
+}
+
+fn sort<T: PartialEq>(v: &Vec<T>, empty_val: T, row_length: usize) -> Vec<usize>
+where
+    T: PartialEq<T>,
+{
+    let mut o: Vec<usize> = (0..v.len() / row_length).collect();
+    o.sort_by_key(|x| {
+        v[(x * row_length)..((x + 1) * row_length)]
+            .iter()
+            .filter(|y| *y == &empty_val)
+            .count()
+    });
+    o
 }
 
 #[cfg(test)]
@@ -279,5 +298,42 @@ mod test {
         random_sparsevec(20);
         random_sparsevec(50);
         random_sparsevec(100);
+    }
+
+    #[test]
+    fn test_sparsevec_compress_same_values() {
+        let v = vec![0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 0, 0, 1, 2, 0];
+
+        let s: Vec<usize> = (0..v.len() / 4).collect();
+        let (c, d) = compress(&v, &s, 0 as usize, 4);
+        assert_eq!(c, vec![0, 1, 2, 3, 0]);
+        assert_eq!(d, vec![0, 0, 1, 0]);
+
+        let sv = SparseVec::from(&v, 0 as usize, 4);
+        assert_eq!(sv.get(0, 0).unwrap(), 0);
+        assert_eq!(sv.get(0, 1).unwrap(), 1);
+        assert_eq!(sv.get(0, 2).unwrap(), 2);
+        assert_eq!(sv.get(0, 3).unwrap(), 3);
+        assert_eq!(sv.get(1, 0).unwrap(), 0);
+        assert_eq!(sv.get(1, 1).unwrap(), 1);
+        assert_eq!(sv.get(2, 0).unwrap(), 1);
+        assert_eq!(sv.get(2, 1).unwrap(), 2);
+        assert_eq!(sv.get(2, 2).unwrap(), 3);
+        assert_eq!(sv.get(2, 3).unwrap(), 0);
+        assert_eq!(sv.get(3, 0).unwrap(), 0);
+        assert_eq!(sv.get(3, 1).unwrap(), 1);
+        assert_eq!(sv.get(3, 2).unwrap(), 2);
+        assert_eq!(sv.get(3, 3).unwrap(), 0);
+    }
+
+    #[test]
+    fn test_sort_function() {
+        let v = vec![1, 0, 0, 0, 8, 9, 0, 0, 5, 6, 7, 0, 1, 2, 3, 4];
+        let s = sort(&v, 0, 4);
+        assert_eq!(s, [3, 2, 1, 0]);
+
+        let v = vec![1, 0, 1, 0, 0, 1, 0, 0, 8, 9, 0, 0, 0, 2, 3, 4];
+        let s = sort(&v, 0, 4);
+        assert_eq!(s, [3, 0, 2, 1]);
     }
 }
