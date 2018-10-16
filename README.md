@@ -29,6 +29,8 @@ fn main() {
 
 # How it works
 
+The following describes the general idea of row displacement for sparse
+vectors, excluding some additional optimisations from the implementation.
 Let's take as an example the two-dimensional vector
 ```
 1 0 0
