@@ -205,7 +205,7 @@ fn compress<T: Clone + Copy + PartialEq>(
 
 fn fits<T: PartialEq>(v: &[T], target: &Vec<T>, d: usize, empty_val: T) -> bool {
     for i in 0..v.len() {
-        if v[i] != empty_val && target[d + i] != empty_val {
+        if v[i] != empty_val && target[d + i] != empty_val && target[d + i] != v[i] {
             return false;
         }
     }
@@ -279,5 +279,33 @@ mod test {
         random_sparsevec(20);
         random_sparsevec(50);
         random_sparsevec(100);
+    }
+
+    #[test]
+    fn test_sparsevec_compress_same_values() {
+        let v = vec![0, 1, 2, 3,
+                     0, 1, 2, 3,
+                     1, 2, 3, 0,
+                     0, 1, 2, 0];
+
+        let (c, d) = compress(&v, 0 as usize, 4);
+        assert_eq!(c, vec![0,1,2,3,0]);
+        assert_eq!(d, vec![0,0,1,0]);
+
+        let sv = SparseVec::from(&v, 0 as usize, 4);
+        assert_eq!(sv.get(0, 0).unwrap(), 0);
+        assert_eq!(sv.get(0, 1).unwrap(), 1);
+        assert_eq!(sv.get(0, 2).unwrap(), 2);
+        assert_eq!(sv.get(0, 3).unwrap(), 3);
+        assert_eq!(sv.get(1, 0).unwrap(), 0);
+        assert_eq!(sv.get(1, 1).unwrap(), 1);
+        assert_eq!(sv.get(2, 0).unwrap(), 1);
+        assert_eq!(sv.get(2, 1).unwrap(), 2);
+        assert_eq!(sv.get(2, 2).unwrap(), 3);
+        assert_eq!(sv.get(2, 3).unwrap(), 0);
+        assert_eq!(sv.get(3, 0).unwrap(), 0);
+        assert_eq!(sv.get(3, 1).unwrap(), 1);
+        assert_eq!(sv.get(3, 2).unwrap(), 2);
+        assert_eq!(sv.get(3, 3).unwrap(), 0);
     }
 }
