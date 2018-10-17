@@ -1,3 +1,7 @@
+[![Build Status](https://api.travis-ci.org/softdevteam/sparsevec.svg?branch=master)](https://travis-ci.org/softdevteam/sparsevec)
+[![Latest version](https://img.shields.io/crates/v/sparsevec.svg)](https://crates.io/crates/sparsevec)
+[![Documentation](https://docs.rs/sparsevec/badge.svg)](https://docs.rs/sparsevec)
+
 # Sparse Vector (SparseVec)
 
 A SparseVec efficiently encodes a two-dimensional matrix of integers. The input
