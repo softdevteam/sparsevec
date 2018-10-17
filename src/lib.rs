@@ -12,7 +12,6 @@
 extern crate serde;
 extern crate num_traits;
 extern crate packedvec;
-extern crate rand;
 extern crate vob;
 
 use num_traits::{AsPrimitive, FromPrimitive, PrimInt, ToPrimitive, Unsigned};
@@ -241,6 +240,7 @@ where
 
 #[cfg(test)]
 mod test {
+    extern crate rand;
     use super::*;
 
     #[test]
