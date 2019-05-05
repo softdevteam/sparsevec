@@ -9,15 +9,10 @@
 
 #![allow(clippy::many_single_char_names)]
 
-#[cfg(feature = "serde")]
-#[macro_use]
-extern crate serde;
-extern crate num_traits;
-extern crate packedvec;
-extern crate vob;
-
 use num_traits::{AsPrimitive, FromPrimitive, PrimInt, ToPrimitive, Unsigned};
 use packedvec::PackedVec;
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
 use vob::Vob;
 
 /// A SparseVec efficiently encodes a two-dimensional matrix of integers. The input matrix must be

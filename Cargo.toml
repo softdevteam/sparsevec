@@ -2,6 +2,7 @@
 name = "sparsevec"
 description = "Compress vectors using row displacement"
 version = "0.1.0"
+edition = "2018"
 authors = ["Lukas Diekmann <lukas.diekmann@gmail.com>"]
 repository = "https://github.com/softdevteam/sparsevec/"
 readme = "README.md"
