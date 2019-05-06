@@ -7,15 +7,12 @@
 // at your option. This file may not be copied, modified, or distributed except according to those
 // terms.
 
-#[cfg(feature = "serde")]
-#[macro_use]
-extern crate serde;
-extern crate num_traits;
-extern crate packedvec;
-extern crate vob;
+#![allow(clippy::many_single_char_names)]
 
 use num_traits::{AsPrimitive, FromPrimitive, PrimInt, ToPrimitive, Unsigned};
 use packedvec::PackedVec;
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
 use vob::Vob;
 
 /// A SparseVec efficiently encodes a two-dimensional matrix of integers. The input matrix must be
@@ -96,8 +93,8 @@ where
     /// let sv = SparseVec::from(&v, 0, 4);
     /// assert_eq!(sv.get(1,2).unwrap(), 7);
     /// ```
-    pub fn from(v: &Vec<T>, empty_val: T, row_length: usize) -> SparseVec<T> {
-        if v.len() == 0 {
+    pub fn from(v: &[T], empty_val: T, row_length: usize) -> SparseVec<T> {
+        if v.is_empty() {
             return SparseVec {
                 displacement: Vec::new(),
                 row_length: 0,
@@ -166,10 +163,10 @@ where
     }
 }
 
-fn calc_empties<T: PartialEq>(vec: &Vec<T>, empty_val: T) -> Vob {
+fn calc_empties<T: PartialEq>(vec: &[T], empty_val: T) -> Vob {
     let mut vob = Vob::from_elem(vec.len(), false);
-    for i in 0..vec.len() {
-        if vec[i] == empty_val {
+    for (i, v) in vec.iter().enumerate() {
+        if *v == empty_val {
             vob.set(i, true);
         }
     }
@@ -177,8 +174,8 @@ fn calc_empties<T: PartialEq>(vec: &Vec<T>, empty_val: T) -> Vob {
 }
 
 fn compress<T: Clone + Copy + PartialEq>(
-    vec: &Vec<T>,
-    sorted: &Vec<usize>,
+    vec: &[T],
+    sorted: &[usize],
     empty_val: T,
     row_length: usize,
 ) -> (Vec<T>, Vec<usize>) {
@@ -207,7 +204,7 @@ fn compress<T: Clone + Copy + PartialEq>(
     (r, dv)
 }
 
-fn fits<T: PartialEq>(v: &[T], target: &Vec<T>, d: usize, empty_val: T) -> bool {
+fn fits<T: PartialEq>(v: &[T], target: &[T], d: usize, empty_val: T) -> bool {
     for i in 0..v.len() {
         if v[i] != empty_val && target[d + i] != empty_val && target[d + i] != v[i] {
             return false;
@@ -224,7 +221,7 @@ fn apply<T: Copy + PartialEq>(v: &[T], target: &mut Vec<T>, d: usize, empty_val:
     }
 }
 
-fn sort<T: PartialEq>(v: &Vec<T>, empty_val: T, row_length: usize) -> Vec<usize>
+fn sort<T: PartialEq>(v: &[T], empty_val: T, row_length: usize) -> Vec<usize>
 where
     T: PartialEq<T>,
 {
