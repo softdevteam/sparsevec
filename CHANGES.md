@@ -1,3 +1,9 @@
+# sparsevec 0.1.2 (2019-11-21)
+
+* License as dual Apache-2.0/MIT (instead of a more complex, and little
+  understood, triple license of Apache-2.0/MIT/UPL-1.0).
+
+
 # sparsevec 0.1.1 (2019-05-08)
 
 * Make `rand` a `dev-dependency` to cut compile times down.
