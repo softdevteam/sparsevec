@@ -60,6 +60,7 @@ use vob::Vob;
 /// value = c[pos] // =3
 /// ```
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[derive(Debug)]
 pub struct SparseVec<T> {
     displacement: Vec<usize>, // Displacement vector
     row_length: usize,        // Row length of the input matrix
