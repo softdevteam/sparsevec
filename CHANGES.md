@@ -1,3 +1,8 @@
+# sparsevec 0.1.3 (2019-12-06)
+
+* Allow `SparseVec`s to be printed with the debug formatter `{:?}`.
+
+
 # sparsevec 0.1.2 (2019-11-21)
 
 * License as dual Apache-2.0/MIT (instead of a more complex, and little
