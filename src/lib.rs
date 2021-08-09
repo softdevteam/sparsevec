@@ -98,7 +98,7 @@ where
 
         // Sort rows by amount of empty values as suggested in
         // "Smaller  faster  table  driven  parser" by S. F. Zeigler
-        let s = sort(&v, empty_val, row_length);
+        let s = sort(v, empty_val, row_length);
         let (c, d) = compress(v, &s, empty_val, row_length);
         let e = calc_empties(v, empty_val);
         let pv = PackedVec::new(c);
