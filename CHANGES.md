@@ -1,3 +1,8 @@
+# sparsevec 0.1.4 (2021-10-20)
+
+* Upgrade dependencies.
+
+
 # sparsevec 0.1.3 (2019-12-06)
 
 * Allow `SparseVec`s to be printed with the debug formatter `{:?}`.
