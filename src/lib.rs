@@ -156,7 +156,7 @@ where
 }
 
 fn calc_empties<T: PartialEq>(vec: &[T], empty_val: T) -> Vob {
-    let mut vob = Vob::from_elem(vec.len(), false);
+    let mut vob = Vob::from_elem(false, vec.len());
     for (i, v) in vec.iter().enumerate() {
         if *v == empty_val {
             vob.set(i, true);
