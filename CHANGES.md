@@ -1,3 +1,10 @@
+# sparsevec 0.2.0 (2022-07-25)
+
+* Move the backing storage (consisting of `PackedVec`s and `Vob`s) from `usize`
+  to `u64`. This makes serialising/deserialising across machine widths possible
+  (though not necessarily reliable!).
+
+
 # sparsevec 0.1.4 (2021-10-20)
 
 * Upgrade dependencies.
