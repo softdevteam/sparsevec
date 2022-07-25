@@ -205,7 +205,7 @@ fn fits<T: PartialEq>(v: &[T], target: &[T], d: usize, empty_val: T) -> bool {
     true
 }
 
-fn apply<T: Copy + PartialEq>(v: &[T], target: &mut Vec<T>, d: usize, empty_val: T) {
+fn apply<T: Copy + PartialEq>(v: &[T], target: &mut [T], d: usize, empty_val: T) {
     for i in 0..v.len() {
         if v[i] != empty_val {
             target[d + i] = v[i]
