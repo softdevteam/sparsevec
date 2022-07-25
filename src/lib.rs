@@ -65,14 +65,14 @@ pub struct SparseVec<T> {
     displacement: Vec<usize>, // Displacement vector
     row_length: usize,        // Row length of the input matrix
     empty_val: T,             // Value considered "empty"
-    empties: Vob,             // Mapping of "empty" cells
-    data: PackedVec<T>,       // Compressed matrix
+    empties: Vob<u64>,        // Mapping of "empty" cells
+    data: PackedVec<T, u64>,  // Compressed matrix
 }
 
 impl<T: Clone + Copy + PartialEq> SparseVec<T>
 where
-    T: AsPrimitive<usize> + FromPrimitive + Ord + PrimInt + ToPrimitive + Unsigned,
-    usize: AsPrimitive<T>,
+    T: AsPrimitive<u64> + FromPrimitive + Ord + PrimInt + ToPrimitive + Unsigned,
+    u64: AsPrimitive<T>,
 {
     /// Constructs a new SparseVec from a `Vec` of unsigned integers where `empty_val` describes
     /// the values to be compressed and `row_length` the element size per row in the original
@@ -91,8 +91,8 @@ where
                 displacement: Vec::new(),
                 row_length: 0,
                 empty_val,
-                empties: Vob::new(),
-                data: PackedVec::new(v.to_vec()),
+                empties: Vob::<u64>::new_with_storage_type(0),
+                data: PackedVec::<T, u64>::new_with_storaget(v.to_vec()),
             };
         }
 
@@ -101,7 +101,7 @@ where
         let s = sort(v, empty_val, row_length);
         let (c, d) = compress(v, &s, empty_val, row_length);
         let e = calc_empties(v, empty_val);
-        let pv = PackedVec::new(c);
+        let pv = PackedVec::<T, u64>::new_with_storaget(c);
         SparseVec {
             displacement: d,
             row_length,
@@ -155,8 +155,8 @@ where
     }
 }
 
-fn calc_empties<T: PartialEq>(vec: &[T], empty_val: T) -> Vob {
-    let mut vob = Vob::from_elem(false, vec.len());
+fn calc_empties<T: PartialEq>(vec: &[T], empty_val: T) -> Vob<u64> {
+    let mut vob = Vob::<u64>::from_elem_with_storage_type(false, vec.len());
     for (i, v) in vec.iter().enumerate() {
         if *v == empty_val {
             vob.set(i, true);
