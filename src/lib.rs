@@ -174,15 +174,26 @@ fn compress<T: Clone + Copy + PartialEq>(
     let mut r = Vec::new(); // Result vector
     r.resize(row_length, empty_val);
 
-    let mut dv = Vec::new(); // displacement vector
-    dv.resize(sorted.len(), 0);
+    let mut dv = vec![0; sorted.len()]; // displacement vector
 
+    let mut tmp = Vec::new();
     for s in sorted {
-        let slice = &vec[s * row_length..(s + 1) * row_length];
+        // The row we're about to iterate over typically contains mostly empty values that can
+        // never succeed with `fits`. We pre-filter out all those empty values up-front, such that
+        // `tmp` contains `(index, non-empty-value)` pairs that we can then pass to `fits`. Because
+        // this is such a tight loop, we reuse the same `Vec` to avoid repeated allocations.
+        tmp.clear();
+        tmp.extend(
+            vec[s * row_length..(s + 1) * row_length]
+                .iter()
+                .enumerate()
+                .filter(|(_, v)| **v != empty_val),
+        );
+
         let mut d = 0; // displacement value
         loop {
-            if fits(slice, &r, d, empty_val) {
-                apply(slice, &mut r, d, empty_val);
+            if fits(tmp.as_slice(), &r, d, empty_val) {
+                apply(tmp.as_slice(), &mut r, d);
                 dv[*s] = d;
                 break;
             } else {
@@ -196,27 +207,24 @@ fn compress<T: Clone + Copy + PartialEq>(
     (r, dv)
 }
 
-fn fits<T: PartialEq>(v: &[T], target: &[T], d: usize, empty_val: T) -> bool {
-    for i in 0..v.len() {
-        if v[i] != empty_val && target[d + i] != empty_val && target[d + i] != v[i] {
+/// `v` is an array of `(index, non-empty_val)` pairs.
+fn fits<T: PartialEq>(v: &[(usize, &T)], target: &[T], d: usize, empty_val: T) -> bool {
+    for (i, x) in v {
+        if target[d + i] != empty_val && target[d + i] != **x {
             return false;
         }
     }
     true
 }
 
-fn apply<T: Copy + PartialEq>(v: &[T], target: &mut [T], d: usize, empty_val: T) {
-    for i in 0..v.len() {
-        if v[i] != empty_val {
-            target[d + i] = v[i]
-        }
+/// `v` is an array of `(index, non-empty_val)` pairs.
+fn apply<T: Copy + PartialEq>(v: &[(usize, &T)], target: &mut [T], d: usize) {
+    for (i, x) in v {
+        target[d + i] = **x;
     }
 }
 
-fn sort<T: PartialEq>(v: &[T], empty_val: T, row_length: usize) -> Vec<usize>
-where
-    T: PartialEq<T>,
-{
+fn sort<T: PartialEq>(v: &[T], empty_val: T, row_length: usize) -> Vec<usize> {
     let mut o: Vec<usize> = (0..v.len() / row_length).collect();
     o.sort_by_key(|x| {
         v[(x * row_length)..((x + 1) * row_length)]
