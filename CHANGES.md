@@ -1,3 +1,9 @@
+# sparsevec 0.2.1 (2024-11-24)
+
+* Optimise the creation of a sparsevec: when used, for example, for grmtools'
+  grammars, this can be a substantial (e.g. in one example over 30x) speedup.
+
+
 # sparsevec 0.2.0 (2022-07-25)
 
 * Move the backing storage (consisting of `PackedVec`s and `Vob`s) from `usize`
