@@ -1,5 +1,7 @@
 #![allow(clippy::many_single_char_names)]
 
+#[cfg(feature = "bincode")]
+use bincode::{Decode, Encode};
 use num_traits::{AsPrimitive, FromPrimitive, PrimInt, ToPrimitive, Unsigned};
 use packedvec::PackedVec;
 #[cfg(feature = "serde")]
@@ -60,6 +62,7 @@ use vob::Vob;
 /// value = c[pos] // =3
 /// ```
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "bincode", derive(Encode, Decode))]
 #[derive(Debug)]
 pub struct SparseVec<T> {
     displacement: Vec<usize>, // Displacement vector
