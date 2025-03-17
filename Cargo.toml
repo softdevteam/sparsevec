@@ -9,10 +9,15 @@ readme = "README.md"
 license = "Apache-2.0/MIT"
 categories = ["data-structures"]
 
+[features]
+bincode = ["dep:bincode", "vob/bincode", "packedvec/bincode"]
+serde = ["dep:serde", "vob/serde", "packedvec/serde"]
+
 [dependencies]
-vob = { version=">=3.0.2", features=["serde"] }
-packedvec = { version="1.0", features=["serde"] }
+vob = { version="3.0.4" }
+packedvec = { version="1.2.5" }
 serde = { version="1.0", features=["derive"], optional=true }
+bincode = { version="2.0", features=["derive"], optional=true }
 num-traits = "0.2"
 
 [dev-dependencies]
