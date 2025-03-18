@@ -1,3 +1,9 @@
+# sparsevec 0.2.2 (2025-03-18)
+
+* Add an optional bincode dependency, which can be used as an alternative to
+  serde for encoding / decoding.
+
+
 # sparsevec 0.2.1 (2024-11-24)
 
 * Optimise the creation of a sparsevec: when used, for example, for grmtools'
