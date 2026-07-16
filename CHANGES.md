@@ -1,3 +1,9 @@
+# sparsevec 0.3.0 (2025-07-16)
+
+* Move from (the unmaintained) `bincode` to `wincode`. The associated feature
+  name has also been renamed to `wincode`.
+
+
 # sparsevec 0.2.2 (2025-03-18)
 
 * Add an optional bincode dependency, which can be used as an alternative to
