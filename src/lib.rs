@@ -1,12 +1,12 @@
 #![allow(clippy::many_single_char_names)]
 
-#[cfg(feature = "bincode")]
-use bincode::{Decode, Encode};
 use num_traits::{AsPrimitive, FromPrimitive, PrimInt, ToPrimitive, Unsigned};
 use packedvec::PackedVec;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 use vob::Vob;
+#[cfg(feature = "wincode")]
+use wincode::{SchemaRead, SchemaWrite};
 
 /// A SparseVec efficiently encodes a two-dimensional matrix of integers. The input matrix must be
 /// encoded as a one-dimensional vector of integers with a row-length. Given an "empty" value, the
@@ -62,7 +62,7 @@ use vob::Vob;
 /// value = c[pos] // =3
 /// ```
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[cfg_attr(feature = "bincode", derive(Encode, Decode))]
+#[cfg_attr(feature = "wincode", derive(SchemaRead, SchemaWrite))]
 #[derive(Debug)]
 pub struct SparseVec<T> {
     displacement: Vec<usize>, // Displacement vector
