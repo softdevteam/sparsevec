@@ -18,5 +18,5 @@ cargo test --release
 
 which cargo-deny || cargo install cargo-deny || true
 if [ "X`which cargo-deny`" != "X" ]; then
-    cargo-deny check license
+    cargo-deny check licenses
 fi
